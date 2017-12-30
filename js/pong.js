@@ -31,10 +31,18 @@ class Ball extends Rect {
     }
 }
 
+class Player extends Rect {
+    constructor() {
+        super(20, 100);
+        this.score = 0;
+    }
+}
+
 class Pong {
     constructor(canvas) {
         this._canvas = canvas;
         this._ctx = canvas.getContext("2d");
+
         this.ball = new Ball;
         this.ball.pos.x = 100;
         this.ball.pos.y = 100;
@@ -42,8 +50,16 @@ class Pong {
         this.ball.vel.x = 100;
         this.ball.vel.y = 100;
 
-        let lastTime;
+        this.players = [
+            new Player,
+            new Player
+        ];
 
+        this.players[0].pos.x = 40;
+        this.players[1].pos.x = this._canvas.width - 40;
+        this.players.forEach(player =>
+            player.pos.y = this._canvas.height / 2);
+        let lastTime;
         const callback = (miliS) => {
             if (lastTime) {
                 this.update((miliS - lastTime) / 1000);
@@ -52,6 +68,23 @@ class Pong {
             requestAnimationFrame(callback);
         }
         callback();
+    }
+    collide(player, ball) {
+        
+    }
+    draw() {
+        this._ctx.fillStyle = "#000";
+        this._ctx.fillRect(0, 0,
+            this._canvas.width, this._canvas.height);
+        this.drawRect(this.ball);
+
+        this.players.forEach(player => this.drawRect(player));
+    }
+
+    drawRect(rect) {
+        this._ctx.fillStyle = "#FFF";
+        this._ctx.fillRect(rect.left, rect.top,
+            rect.size.x, rect.size.y);
     }
 
     update(dt) {
@@ -65,13 +98,13 @@ class Pong {
             this.ball.vel.y = -this.ball.vel.y;
         }
 
-        this._ctx.fillStyle = "#000";
-        this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
-
-        this._ctx.fillStyle = "#FFF";
-        this._ctx.fillRect(this.ball.pos.x, this.ball.pos.y, this.ball.size.x, this.ball.size.y);
+        this.players[1].pos.y = this.ball.pos.y;
+        this.draw();
     }
 }
 
 const canvas = document.getElementById("pong");
 const pong = new Pong(canvas);
+
+canvas.addEventListener("mousemove", ev =>
+    pong.players[0].pos.y = ev.offsetY);
