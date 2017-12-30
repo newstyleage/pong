@@ -4,8 +4,14 @@ html {
 
 body {
     display: flex;
+    justify-content: center;
+    margin: 0;
 }
 
 #pong {
-    margin: auto;
+    border-top: solid 1px #fff;
+    border-bottom: solid 1px #fff;
+    cursor: none;
+    image-rendering: pixelated;
+    height: 100vh;
 }
