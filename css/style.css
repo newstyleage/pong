@@ -1,0 +1,11 @@
+html {
+    background: #c6c6c6;
+}
+
+body {
+    display: flex;
+}
+
+#pong {
+    margin: auto;
+}
