@@ -11,16 +11,16 @@ class Rect {
         this.size = new Vec(w, h);
     }
     get left() {
-        return this.pos.x - this.size.x /2
+        return this.pos.x - this.size.x / 2
     }
     get right() {
-        return this.pos.x + this.size.x /2
+        return this.pos.x + this.size.x / 2
     }
     get top() {
-        return this.pos.y - this.size.y /2
+        return this.pos.y - this.size.y / 2
     }
     get bottom() {
-        return this.pos.y + this.size.y /2
+        return this.pos.y + this.size.y / 2
     }
 }
 
@@ -31,43 +31,47 @@ class Ball extends Rect {
     }
 }
 
+class Pong {
+    constructor(canvas) {
+        this._canvas = canvas;
+        this._ctx = canvas.getContext("2d");
+        this.ball = new Ball;
+        this.ball.pos.x = 100;
+        this.ball.pos.y = 100;
+
+        this.ball.vel.x = 100;
+        this.ball.vel.y = 100;
+
+        let lastTime;
+
+        const callback = (miliS) => {
+            if (lastTime) {
+                this.update((miliS - lastTime) / 1000);
+            }
+            lastTime = miliS;
+            requestAnimationFrame(callback);
+        }
+        callback();
+    }
+
+    update(dt) {
+        this.ball.pos.x += this.ball.vel.x * dt;
+        this.ball.pos.y += this.ball.vel.y * dt;
+
+        if (this.ball.left < 0 || this.ball.right > this._canvas.width - 10) {
+            this.ball.vel.x = -this.ball.vel.x;
+        }
+        if (this.ball.top < 0 || this.ball.bottom > this._canvas.height - 10) {
+            this.ball.vel.y = -this.ball.vel.y;
+        }
+
+        this._ctx.fillStyle = "#000";
+        this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+
+        this._ctx.fillStyle = "#FFF";
+        this._ctx.fillRect(this.ball.pos.x, this.ball.pos.y, this.ball.size.x, this.ball.size.y);
+    }
+}
+
 const canvas = document.getElementById("pong");
-const ctx = canvas.getContext("2d");
-
-const ball = new Ball;
-ball.pos.x = 100;
-ball.pos.y = 100;
-
-ball.vel.x = 100;
-ball.vel.y = 100;
-
-let lastTime;
-
-function callback(miliS) {
-    if (lastTime) {
-        update((miliS - lastTime) / 1000);
-    }
-    lastTime = miliS;
-    requestAnimationFrame(callback);
-}
-
-function update(dt) {
-    ball.pos.x += ball.vel.x * dt;
-    ball.pos.y += ball.vel.y * dt;
-
-    if (ball.left < 0 || ball.right > canvas.width -10) {
-        ball.vel.x = -ball.vel.x;
-    }
-    if (ball.top < 0 || ball.bottom > canvas.height - 10) {
-        ball.vel.y = -ball.vel.y;
-    }
-
-
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = "#FFF";
-    ctx.fillRect(ball.pos.x, ball.pos.y, ball.size.x, ball.size.y);
-}
-
-callback();
+const pong = new Pong(canvas);
